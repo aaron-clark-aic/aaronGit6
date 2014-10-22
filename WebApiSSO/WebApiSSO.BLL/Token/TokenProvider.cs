@@ -5,11 +5,11 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Web;
 using EntityFramework.Extensions;
-using CH.Home.DAL;
-using CH.Home.BLL.Utils;
+using WebApiSSO.DAL;
+using WebApiSSO.BLL.Utils;
 using System.Diagnostics;
 using System.IO;
-using CH.Home.BLL.Business;
+using WebApiSSO.BLL.Business;
 
 
 namespace WebApiSSO.BLL.Token

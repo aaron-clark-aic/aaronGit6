@@ -30,7 +30,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.6.0.0\lib\net40\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\packages\EntityFramework.6.0.0\lib\net40\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -41,10 +48,22 @@
   <ItemGroup>
     <Compile Include="DbSession.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResultState.cs" />
     <Compile Include="Token\ITokenProvider.cs" />
     <Compile Include="Token\TokenCacheProvider.cs" />
     <Compile Include="Token\TokenProvider.cs" />
     <Compile Include="Token\UserInfo.cs" />
+    <Compile Include="Utils\ResultStateHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WebApiSSO.DAL\WebApiSSO.DAL.csproj">
+      <Project>{c0f4693e-f1f4-47d3-8743-58425f954e0c}</Project>
+      <Name>WebApiSSO.DAL</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
