@@ -191,7 +191,7 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\AccountManage\ChangePasswordController.cs" />
     <Compile Include="Controllers\AccountManage\SetNewPasswordController.cs" />
-    <Compile Include="Controllers\AccountManage\SetPasswordController.cs" />
+    <Compile Include="Controllers\AccountManage\RegisterController.cs" />
     <Compile Include="Controllers\BaseCtrl.cs" />
     <Compile Include="Controllers\TokenController.cs" />
     <Compile Include="Global.asax.cs">

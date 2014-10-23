@@ -201,7 +201,6 @@ namespace WebApiSSO.BLL
                     {
                         tokenProvider = new TokenProvider(this);
                     }
-
                 }
             }
             return tokenProvider;

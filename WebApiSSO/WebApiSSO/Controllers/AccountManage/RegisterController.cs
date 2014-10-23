@@ -10,7 +10,7 @@ namespace WebApiSSO.Api.Controllers
     /// 新用户设置密码Api
     /// </summary>
     [CAuthorize]
-    public class SetPasswordController : BaseDbCtrl
+    public class RegisterController : BaseDbCtrl
     {
         /// <summary>
         /// 设置密码 注册
