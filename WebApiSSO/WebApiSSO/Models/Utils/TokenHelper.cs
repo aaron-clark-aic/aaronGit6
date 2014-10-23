@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading;
 using System.Web;
 using System.Web.Http;
-using WebApiSSO.BLL.Token;
 
 namespace WebApiSSO.Api.Models.Utils
 {

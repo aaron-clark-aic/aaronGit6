@@ -192,12 +192,6 @@
     <Compile Include="Controllers\AccountManage\ChangePasswordController.cs" />
     <Compile Include="Controllers\AccountManage\SetNewPasswordController.cs" />
     <Compile Include="Controllers\AccountManage\SetPasswordController.cs" />
-    <Compile Include="Controllers\AccountManage\SignStateController.cs" />
-    <Compile Include="Controllers\AccountManage\UserAvatarController.cs" />
-    <Compile Include="Controllers\AccountManage\UserBalanceController.cs" />
-    <Compile Include="Controllers\AccountManage\UserInfoController.cs" />
-    <Compile Include="Controllers\AccountManage\UserSearchController.cs" />
-    <Compile Include="Controllers\AccountManage\VerifyCodeController.cs" />
     <Compile Include="Controllers\BaseCtrl.cs" />
     <Compile Include="Controllers\TokenController.cs" />
     <Compile Include="Global.asax.cs">

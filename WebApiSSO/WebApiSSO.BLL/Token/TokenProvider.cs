@@ -9,29 +9,30 @@ using WebApiSSO.DAL;
 using WebApiSSO.BLL.Utils;
 using System.Diagnostics;
 using System.IO;
+using WebApiSSO.BLL.Business;
 
 
 namespace WebApiSSO.BLL.Token
 {
-    public class TokenProvider : ITokenProvider, IDisposable
+    public class TokenProvider :BaseBusiness, ITokenProvider, IDisposable
     {
 
-        private DbSession Session;
-        /// <summary>
-        /// 获取DbSession对应的数据库上下文
-        /// </summary>
-        /// <returns>数据库上下文</returns>
-        public Test9527Entities DbContext
-        {
-            get
-            {
-                return Session.DbContext;
-            }           
-        }
+        //private DbSession Session;
+        ///// <summary>
+        ///// 获取DbSession对应的数据库上下文
+        ///// </summary>
+        ///// <returns>数据库上下文</returns>
+        //public Test9527Entities DbContext
+        //{
+        //    get
+        //    {
+        //        return Session.DbContext;
+        //    }           
+        //}
         #region 业务统一构造函数
         public TokenProvider() : this(DbSession.Session) { }
-        public TokenProvider(DbSession session)  {
-            this.Session = session;
+        public TokenProvider(DbSession session) : base(session)  {
+            //this.Session = session;
         }
         #endregion
 
@@ -134,9 +135,9 @@ namespace WebApiSSO.BLL.Token
             {
                 try
                 {
-                    var userInfo = DbContext.Users
-                        .Where((user) => user.Name == usr)
-                        .Select(u => new { ID = u.ID, Name = u.Name, Passwd = u.Passwd })
+                    var userInfo = DbContext.User
+                        .Where((user) => user.User_Name == usr)
+                        .Select(u => new { ID = u.User_ID, Name = u.User_Name, Passwd = u.User_Passwd })
                         .FirstOrDefault();
 
                     if (userInfo != null)
@@ -185,7 +186,7 @@ namespace WebApiSSO.BLL.Token
             ResultState state;
             try
             {
-#if DEBUG
+#if DEBUG==false
                 #region 谭欣要加的测试账号
                 if (username == "12345678912")
                 {
@@ -215,12 +216,12 @@ namespace WebApiSSO.BLL.Token
                     state = Session.GetBusiness<AccountBusiness>().CheckUsername(username);
                     if (state == ResultState.NO_USER)
                     {
-                        DbContext.Users.Add(new User()
+                        DbContext.User.Add(new User()
                         {
                             //TODO: 哈希
-                            Name = username,
-                            Passwd = password,
-                            RegTime = DateTime.Now //写入注册时间
+                            User_Name = username,
+                            User_Passwd = password,
+                            User_Reg_time = DateTime.Now //写入注册时间
                         });
                         DbContext.SaveChanges();
                         state = ResultState.SUCCESS;
@@ -245,14 +246,14 @@ namespace WebApiSSO.BLL.Token
             ResultState state;
             try
             {
-                var me = DbContext.Users.Where(i => i.Name == username).FirstOrDefault();
+                var me = DbContext.User.Where(i => i.User_Name == username).FirstOrDefault();
                 if (me != null)
                 {
                     //TODO: 哈希
-                    me.Passwd = newPwd;
+                    me.User_Passwd = newPwd;
                     DbContext.SaveChanges();
                     //失效之前的所有Token
-                    InvalidAllToken(me.ID);
+                    InvalidAllToken(me.User_ID);
                     state = ResultState.SUCCESS;
                 }
                 else
@@ -280,13 +281,13 @@ namespace WebApiSSO.BLL.Token
             {
                 try
                 {
-                    var me = DbContext.Users.Where(u => u.ID == usr.Id).FirstOrDefault();
+                    var me = DbContext.User.Where(u => u.User_ID == usr.Id).FirstOrDefault();
                     if (me != null)
                     {
-                        if (oldPwd == me.Passwd)
+                        if (oldPwd == me.User_Passwd)
                         {
                             //TODO: 哈希
-                            me.Passwd = newPwd;
+                            me.User_Passwd = newPwd;
                             DbContext.SaveChanges();
                             //失效之前的所有Token
                             InvalidAllOtherToken(usr);
@@ -329,9 +330,9 @@ namespace WebApiSSO.BLL.Token
                 try
                 {
                     //TODO: 验证异地登录
-                    var tokenInfo = DbContext.UserTokens
+                    var tokenInfo = DbContext.UserToken
                         .Where((t) => t.Token == guid)
-                        .Select(t => new { t.Enabled, t.UserId, t.User.Name, t.User.NickName })
+                        .Select(t => new { t.Enabled, t.UserId, t.Base_User.User_Name })
                         .FirstOrDefault();
                     if (tokenInfo != null)//验证有效性
                     {
@@ -358,10 +359,9 @@ namespace WebApiSSO.BLL.Token
                                 {
                                     AuthenticationType = authType,
                                     Id = tokenInfo.UserId,
-                                    Name = tokenInfo.Name,
+                                    Name = tokenInfo.User_Name,
                                     Token = token,
-                                    Enable = tokenInfo.Enabled,
-                                    NickName = String.IsNullOrEmpty(tokenInfo.NickName) ? tokenInfo.Name : tokenInfo.NickName
+                                    Enable = tokenInfo.Enabled                                   
                                 }
                             };
                             state = ResultState.SUCCESS;
@@ -423,7 +423,7 @@ namespace WebApiSSO.BLL.Token
                     int uid;
                     if (TryParseGuid(out guid, out uid, usr.Token))
                     {
-                        DbContext.UserTokens.Where(t => t.UserId == uid && t.Token != guid).Delete();
+                        DbContext.UserToken.Where(t => t.UserId == uid && t.Token != guid).Delete();
                         state = ResultState.SUCCESS;
                     }
                     else
@@ -448,7 +448,7 @@ namespace WebApiSSO.BLL.Token
             ResultState state;
             try
             {
-                DbContext.UserTokens.Where(t => t.UserId == uid).Delete();
+                DbContext.UserToken.Where(t => t.UserId == uid).Delete();
                 state = ResultState.SUCCESS;
             }
             catch
@@ -471,7 +471,7 @@ namespace WebApiSSO.BLL.Token
             {
                 try
                 {
-                    var val = DbContext.UserTokens.Where((t) => t.Token == guid);
+                    var val = DbContext.UserToken.Where((t) => t.Token == guid);
 #if false
                     DbContext.Table_UserToken.Remove(val.FirstOrDefault());
                     DbContext.SaveChanges();

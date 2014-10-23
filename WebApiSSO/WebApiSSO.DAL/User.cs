@@ -22,20 +22,7 @@ namespace WebApiSSO.DAL
         public int User_ID { get; set; }
         public string User_Name { get; set; }
         public string User_Passwd { get; set; }
-        public Nullable<bool> Gender { get; set; }
-        public Nullable<decimal> Height { get; set; }
-        public Nullable<decimal> Weight { get; set; }
-        public string Area { get; set; }
-        public string Nick_Name { get; set; }
-        public string PS_URL { get; set; }
-        public string Sign { get; set; }
-        public Nullable<byte> Status { get; set; }
-        public Nullable<short> User_Type { get; set; }
         public Nullable<System.DateTime> User_Reg_time { get; set; }
-        public Nullable<System.DateTime> Login_time { get; set; }
-        public Nullable<int> Level { get; set; }
-        public Nullable<int> Login_Count { get; set; }
-        public Nullable<System.DateTime> Birthday { get; set; }
     
         public virtual ICollection<UserToken> User_Token { get; set; }
     }

@@ -13,7 +13,7 @@ namespace WebApiSSO.Api.Controllers
     public class SetPasswordController : BaseDbCtrl
     {
         /// <summary>
-        /// 设置密码
+        /// 设置密码 注册
         /// </summary>
         /// <param name="param">设置密码参数</param>
         /// <returns></returns>
