@@ -4,7 +4,29 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="Test9527Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="Test9527Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Base_User">
+          <Key>
+            <PropertyRef Name="User_ID" />
+          </Key>
+          <Property Name="User_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="User_Name" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="User_Passwd" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Gender" Type="bit" />
+          <Property Name="Height" Type="decimal" Precision="4" Scale="1" />
+          <Property Name="Weight" Type="decimal" Precision="4" Scale="1" />
+          <Property Name="Area" Type="varchar" MaxLength="200" />
+          <Property Name="Nick_Name" Type="varchar" MaxLength="50" />
+          <Property Name="PS_URL" Type="varchar" MaxLength="200" />
+          <Property Name="Sign" Type="varchar" MaxLength="100" />
+          <Property Name="Status" Type="tinyint" />
+          <Property Name="User_Type" Type="smallint" />
+          <Property Name="User_Reg_time" Type="datetime" />
+          <Property Name="Login_time" Type="datetime" />
+          <Property Name="Level" Type="int" />
+          <Property Name="Login_Count" Type="int" />
+          <Property Name="Birthday" Type="date" />
+        </EntityType>
         <EntityType Name="User_Token">
           <Key>
             <PropertyRef Name="Token" />
@@ -16,15 +38,31 @@
           <Property Name="ClientName" Type="nvarchar" MaxLength="256" />
           <Property Name="Enabled" Type="bit" Nullable="false" />
         </EntityType>
+        <Association Name="FK_User_Token_Base_User">
+          <End Role="Base_User" Type="Self.Base_User" Multiplicity="1" />
+          <End Role="User_Token" Type="Self.User_Token" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Base_User">
+              <PropertyRef Name="User_ID" />
+            </Principal>
+            <Dependent Role="User_Token">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="Test9527ModelStoreContainer">
+          <EntitySet Name="Base_User" EntityType="Self.Base_User" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User_Token" EntityType="Self.User_Token" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_User_Token_Base_User" Association="Self.FK_User_Token_Base_User">
+            <End Role="Base_User" EntitySet="Base_User" />
+            <End Role="User_Token" EntitySet="User_Token" />
+          </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="Test9527Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityType Name="User_Token">
+        <EntityType Name="UserToken">
           <Key>
             <PropertyRef Name="Token" />
           </Key>
@@ -34,18 +72,59 @@
           <Property Name="ClientId" Type="Int16" Nullable="false" />
           <Property Name="ClientName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="Enabled" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Base_User" Relationship="Test9527Model.FK_User_Token_Base_User" FromRole="User_Token" ToRole="Base_User" />
         </EntityType>
         <EntityContainer Name="Test9527Entities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="User_Token" EntityType="Self.User_Token" />
+          <EntitySet Name="UserToken" EntityType="Test9527Model.UserToken" />
+          <EntitySet Name="User" EntityType="Test9527Model.User" />
+          <AssociationSet Name="FK_User_Token_Base_User" Association="Test9527Model.FK_User_Token_Base_User">
+            <End Role="Base_User" EntitySet="User" />
+            <End Role="User_Token" EntitySet="UserToken" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="User_ID" />
+          </Key>
+          <Property Name="User_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="User_Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="User_Passwd" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Gender" Type="Boolean" />
+          <Property Name="Height" Type="Decimal" Precision="4" Scale="1" />
+          <Property Name="Weight" Type="Decimal" Precision="4" Scale="1" />
+          <Property Name="Area" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Nick_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PS_URL" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Sign" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="Byte" />
+          <Property Name="User_Type" Type="Int16" />
+          <Property Name="User_Reg_time" Type="DateTime" Precision="3" />
+          <Property Name="Login_time" Type="DateTime" Precision="3" />
+          <Property Name="Level" Type="Int32" />
+          <Property Name="Login_Count" Type="Int32" />
+          <Property Name="Birthday" Type="DateTime" Precision="0" />
+          <NavigationProperty Name="User_Token" Relationship="Test9527Model.FK_User_Token_Base_User" FromRole="Base_User" ToRole="User_Token" />
+        </EntityType>
+        <Association Name="FK_User_Token_Base_User">
+          <End Type="Test9527Model.User" Role="Base_User" Multiplicity="1" />
+          <End Type="Test9527Model.UserToken" Role="User_Token" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Base_User">
+              <PropertyRef Name="User_ID" />
+            </Principal>
+            <Dependent Role="User_Token">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="Test9527ModelStoreContainer" CdmEntityContainer="Test9527Entities">
-          <EntitySetMapping Name="User_Token">
-            <EntityTypeMapping TypeName="Test9527Model.User_Token">
+          <EntitySetMapping Name="UserToken">
+            <EntityTypeMapping TypeName="Test9527Model.UserToken">
               <MappingFragment StoreEntitySet="User_Token">
                 <ScalarProperty Name="Token" ColumnName="Token" />
                 <ScalarProperty Name="LastTime" ColumnName="LastTime" />
@@ -53,6 +132,29 @@
                 <ScalarProperty Name="ClientId" ColumnName="ClientId" />
                 <ScalarProperty Name="ClientName" ColumnName="ClientName" />
                 <ScalarProperty Name="Enabled" ColumnName="Enabled" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="User">
+            <EntityTypeMapping TypeName="Test9527Model.User">
+              <MappingFragment StoreEntitySet="Base_User">
+                <ScalarProperty Name="Birthday" ColumnName="Birthday" />
+                <ScalarProperty Name="Login_Count" ColumnName="Login_Count" />
+                <ScalarProperty Name="Level" ColumnName="Level" />
+                <ScalarProperty Name="Login_time" ColumnName="Login_time" />
+                <ScalarProperty Name="User_Reg_time" ColumnName="User_Reg_time" />
+                <ScalarProperty Name="User_Type" ColumnName="User_Type" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Sign" ColumnName="Sign" />
+                <ScalarProperty Name="PS_URL" ColumnName="PS_URL" />
+                <ScalarProperty Name="Nick_Name" ColumnName="Nick_Name" />
+                <ScalarProperty Name="Area" ColumnName="Area" />
+                <ScalarProperty Name="Weight" ColumnName="Weight" />
+                <ScalarProperty Name="Height" ColumnName="Height" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="User_Passwd" ColumnName="User_Passwd" />
+                <ScalarProperty Name="User_Name" ColumnName="User_Name" />
+                <ScalarProperty Name="User_ID" ColumnName="User_ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

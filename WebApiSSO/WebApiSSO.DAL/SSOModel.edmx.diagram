@@ -5,7 +5,9 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="a8e243e202c34732accff7bc25cc97a2" Name="Diagram1">
-        <EntityTypeShape EntityType="Test9527Model.User_Token" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Test9527Model.UserToken" Width="1.5" PointX="0.75" PointY="0.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Test9527Model.User" Width="1.5" PointX="4" PointY="0.5" />
+        <AssociationConnector Association="Test9527Model.FK_User_Token_Base_User" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

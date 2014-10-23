@@ -25,6 +25,7 @@ namespace WebApiSSO.DAL
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<User_Token> User_Token { get; set; }
+        public virtual DbSet<UserToken> UserToken { get; set; }
+        public virtual DbSet<User> User { get; set; }
     }
 }

@@ -12,7 +12,7 @@ namespace WebApiSSO.DAL
     using System;
     using System.Collections.Generic;
     
-    public partial class User_Token
+    public partial class UserToken
     {
         public System.Guid Token { get; set; }
         public System.DateTime LastTime { get; set; }
@@ -20,5 +20,7 @@ namespace WebApiSSO.DAL
         public short ClientId { get; set; }
         public string ClientName { get; set; }
         public bool Enabled { get; set; }
+    
+        public virtual User Base_User { get; set; }
     }
 }

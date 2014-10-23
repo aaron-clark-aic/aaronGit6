@@ -177,18 +177,18 @@ namespace WebApiSSO.BLL
         ///// <summary>
         ///// 二级缓存字典(静态), 按业务类型缓存和反射来的使用DbSession生成业务的工厂方法
         ///// </summary>
-        //private static readonly ConcurrentDictionary<Type, Func<DbSession, BaseBusiness>> businessFactMap = new ConcurrentDictionary<Type, Func<DbSession, BaseBusiness>>();
+        private static readonly ConcurrentDictionary<Type, Func<DbSession, BaseBusiness>> businessFactMap = new ConcurrentDictionary<Type, Func<DbSession, BaseBusiness>>();
         ///// <summary>
         ///// 一级缓存字典(按需初始化), 按业务类型缓存和当前DbSession相关的业务实例
         ///// </summary>
-        //private readonly MyLazy<ConcurrentDictionary<Type, BaseBusiness>> businessMap = new MyLazy<ConcurrentDictionary<Type, BaseBusiness>>();
-        //private ConcurrentDictionary<Type, BaseBusiness> BusinessMap
-        //{
-        //    get
-        //    {
-        //        return businessMap.Value;
-        //    }
-        //}
+        private readonly MyLazy<ConcurrentDictionary<Type, BaseBusiness>> businessMap = new MyLazy<ConcurrentDictionary<Type, BaseBusiness>>();
+        private ConcurrentDictionary<Type, BaseBusiness> BusinessMap
+        {
+            get
+            {
+                return businessMap.Value;
+            }
+        }
 
         private ITokenProvider tokenProvider;
         public ITokenProvider GetITokenProvider()
@@ -214,48 +214,48 @@ namespace WebApiSSO.BLL
         /// <typeparam name="T">业务类型</typeparam>
         /// <returns>和当前DbSession相关的业务实例</returns>
         /// <exception cref="InvalidOperationException">指定的类型不具有使用DbSession的构造函数</exception>
-//        public T GetBusiness<T>() where T : BaseBusiness//, new()
-//        {
-//            if (typeof(T) != typeof(TokenProvider))
-//            {
-//                //在一级缓存中查找指定业务类型的实例, 否则用二级缓存中的工厂方法生成
-//                Func<Type, BaseBusiness> valueFact = (type) =>
-//                {
-//                    //在二级缓存中查找指定业务类型的工厂方法, 否则用反射生成
-//                    return businessFactMap.GetOrAdd(type, (type2) =>
-//                    {
-//                        //获取指定类型的具有一个参数DbSession的构造函数
-//                        var init = type2.GetConstructor(new Type[] { typeof(DbSession) });
-//                        //找不到, 报错
-//                        if (init == null)
-//                            throw new InvalidOperationException("指定的类型不具有使用DbSession的构造函数");
-//#if true
-//                        //NOTE:从微软抄的加自己整理, 有点不明觉厉
-//                        //使用表达式树将其编译为函数
-//                        var pars = new ParameterExpression[] { Expression.Parameter(typeof(DbSession), "session") };
-//                        NewExpression body = Expression.New(init, pars);
-//                        return Expression.Lambda<Func<DbSession, BaseBusiness>>(body, pars).Compile();
-//#else
-//                        return (session) => init.Invoke(new object[] { session });
-//#endif
-//                    })(this);
-//                };
-//                Type key = typeof(T);
-//                BaseBusiness res = BusinessMap.GetOrAdd(key, valueFact);
-//                if (res.IsDisposed)
-//                {
-//                    //如果之前分配的业务已被释放, 分配一个新的
-//                    res = valueFact(key);
-//                    BusinessMap[key] = res;
-//                }
-//                return (T)res;
-//            }
-//            else
-//            {
-//                //对TokenProvider特别处理
-//                return (T)GetITokenProvider();
-//            }
-//        }
+        public T GetBusiness<T>() where T : BaseBusiness//, new()
+        {
+            if (typeof(T) != typeof(TokenProvider))
+            {
+                //在一级缓存中查找指定业务类型的实例, 否则用二级缓存中的工厂方法生成
+                Func<Type, BaseBusiness> valueFact = (type) =>
+                {
+                    //在二级缓存中查找指定业务类型的工厂方法, 否则用反射生成
+                    return businessFactMap.GetOrAdd(type, (type2) =>
+                    {
+                        //获取指定类型的具有一个参数DbSession的构造函数
+                        var init = type2.GetConstructor(new Type[] { typeof(DbSession) });
+                        //找不到, 报错
+                        if (init == null)
+                            throw new InvalidOperationException("指定的类型不具有使用DbSession的构造函数");
+#if true
+                        //NOTE:从微软抄的加自己整理, 有点不明觉厉
+                        //使用表达式树将其编译为函数
+                        var pars = new ParameterExpression[] { Expression.Parameter(typeof(DbSession), "session") };
+                        NewExpression body = Expression.New(init, pars);
+                        return Expression.Lambda<Func<DbSession, BaseBusiness>>(body, pars).Compile();
+#else
+                        return (session) => init.Invoke(new object[] { session });
+#endif
+                    })(this);
+                };
+                Type key = typeof(T);
+                BaseBusiness res = BusinessMap.GetOrAdd(key, valueFact);
+                if (res.IsDisposed)
+                {
+                    //如果之前分配的业务已被释放, 分配一个新的
+                    res = valueFact(key);
+                    BusinessMap[key] = res;
+                }
+                return (T)res;
+            }
+            else
+            {
+                //对TokenProvider特别处理
+                return (T)GetITokenProvider();
+            }
+        }
         #endregion
         /// <summary>
         /// 正式保存此Session中修改的数据

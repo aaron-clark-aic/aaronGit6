@@ -9,16 +9,30 @@ using WebApiSSO.DAL;
 using WebApiSSO.BLL.Utils;
 using System.Diagnostics;
 using System.IO;
-using WebApiSSO.BLL.Business;
 
 
 namespace WebApiSSO.BLL.Token
 {
-    public class TokenProvider : BaseBusiness, ITokenProvider, IDisposable
+    public class TokenProvider : ITokenProvider, IDisposable
     {
+
+        private DbSession Session;
+        /// <summary>
+        /// 获取DbSession对应的数据库上下文
+        /// </summary>
+        /// <returns>数据库上下文</returns>
+        public Test9527Entities DbContext
+        {
+            get
+            {
+                return Session.DbContext;
+            }           
+        }
         #region 业务统一构造函数
-        public TokenProvider() : base() { }
-        public TokenProvider(DbSession session) : base(session) { }
+        public TokenProvider() : this(DbSession.Session) { }
+        public TokenProvider(DbSession session)  {
+            this.Session = session;
+        }
         #endregion
 
         public ResultState TryRenewToken(string usr, string pwd, byte from, string userAgent, ref string token)//userAgent将无效
@@ -33,7 +47,7 @@ namespace WebApiSSO.BLL.Token
                 try
                 {
                     //多点登录的限制
-                    var tokens = DbContext.UserTokens.Where((t) => t.UserId == uid && t.ClientId == from);
+                    var tokens = DbContext.UserToken.Where((t) => t.UserId == uid && t.ClientId == from);
                     Guid guid;
                     int tokenUid;
                     bool onlyOneClient = (from == 1);
@@ -93,7 +107,7 @@ namespace WebApiSSO.BLL.Token
                             ClientName = userAgent,
                             Enabled = true
                         };
-                        DbContext.UserTokens.Add(tokenObj);
+                        DbContext.UserToken.Add(tokenObj);
                         DbContext.SaveChanges();
                         //必须在SaveChanges之后Token才有值
                         token = FormatGuid(tokenObj.UserId, tokenObj.Token);
